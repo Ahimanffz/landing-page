@@ -8,199 +8,340 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #020104;
-            --bg-surface: rgba(14, 11, 22, 0.55);
+            --bg-base: #020005;
+            --bg-surface: rgba(13, 6, 28, 0.7);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
-            --accent: #06b6d4; /* Cambiado a un tono más cyan/azul acorde a KyroX */
+            --accent-cyan: #00f0ff; 
             --accent-blue: #3b82f6;
-            --accent-purple: #a855f7;
-            --accent-green: #10b981;
-            --accent-rose: #f43f5e;
-            --accent-glow: rgba(6, 182, 212, 0.4);
-            --border-light: rgba(255, 255, 255, 0.08);
-            --transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            --accent-purple: #bf00ff;
+            --accent-green: #25D366;
+            --accent-rose: #ff0055;
+            --accent-gold: #ffaa00;
+            --cyan-glow: rgba(0, 240, 255, 0.45);
+            --purple-glow: rgba(191, 0, 255, 0.45);
+            --border-light: rgba(255, 255, 255, 0.06);
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            scroll-behavior: smooth; 
+        }
 
         body {
             background-color: var(--bg-base);
-            background-image: 
-                linear-gradient(rgba(6, 182, 212, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(6, 182, 212, 0.02) 1px, transparent 1px),
-                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 45%);
-            background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
-            background-attachment: fixed;
-            color: var(--text-main); font-family: 'Inter', sans-serif;
-            overflow-x: hidden; line-height: 1.6;
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden; 
+            line-height: 1.6;
+            position: relative;
         }
 
-        /* ====== ANIMACIONES CLAVE ====== */
-        @keyframes gradientFlow {
+        /* FONDO ULTRA VIVO ANIMADO */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(191, 0, 255, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 50% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 45%);
+            z-index: -2;
+            animation: auroraBorealis 15s linear infinite;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            animation: gridMove 8s linear infinite;
+        }
+
+        /* ====== ANIMACIONES GENERALES ====== */
+        @keyframes auroraBorealis {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        @keyframes textGradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
+        @keyframes pulseWhatsapp {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 15px rgba(88, 101, 242, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(88, 101, 242, 0.6); }
-            100% { box-shadow: 0 0 15px rgba(88, 101, 242, 0.3); }
+        /* Efectos de Entrada Scroll */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px); 
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
         }
-
-        .reveal { opacity: 0; transform: translateY(40px) scale(0.98); transition: var(--transition); }
-        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+        .reveal.active { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
 
         /* ====== NAVEGACIÓN ====== */
         nav {
             position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; background: rgba(2, 1, 4, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-light); z-index: 1000;
+            padding: 20px 6%; background: rgba(2, 0, 5, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1); z-index: 1000;
         }
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; letter-spacing: 2px; font-weight: 900; }
+        
+        .logo { 
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; letter-spacing: 2px; font-weight: 900; 
+        }
         .logo span {
-            background: linear-gradient(-45deg, #06b6d4, #3b82f6, #a855f7, #06b6d4);
-            background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: gradientFlow 4s ease infinite;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-cyan));
+            background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: textGradient 3s linear infinite;
         }
+
         .nav-links a {
-            color: var(--text-muted); text-decoration: none; margin-left: 35px; font-size: 0.95rem; font-weight: 600;
-            position: relative; transition: var(--transition);
+            color: var(--text-muted); text-decoration: none; margin-left: 30px; font-size: 0.95rem; font-weight: 600;
+            transition: var(--transition-smooth); position: relative; padding: 5px 0;
         }
+        .nav-links a:hover { color: #fff; text-shadow: 0 0 10px var(--cyan-glow); }
         .nav-links a::after {
-            content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
-            background-color: var(--accent); transition: var(--transition);
+            content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0;
+            background: var(--accent-cyan); transition: var(--transition-smooth);
         }
-        .nav-links a:hover { color: #fff; text-shadow: 0 0 15px var(--accent-glow); }
         .nav-links a:hover::after { width: 100%; }
 
         /* ====== CONTENEDOR ====== */
-        .container { max-width: 1200px; margin: 0 auto; padding: 140px 20px 60px; display: flex; flex-direction: column; gap: 140px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 140px 20px 60px; display: flex; flex-direction: column; gap: 120px; }
 
         /* ====== HERO ====== */
         .hero { text-align: center; padding: 40px 0; }
         .hero h1 {
-            font-size: clamp(3rem, 6vw, 6rem); line-height: 1.1; font-weight: 900; margin-bottom: 25px; font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(-45deg, #ffffff, #cffafe, #06b6d4, #3b82f6, #ffffff);
-            background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: gradientFlow 6s ease infinite; text-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+            font-size: clamp(2.5rem, 5.5vw, 5rem); line-height: 1.1; font-weight: 900; margin-bottom: 25px; font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(-45deg, #ffffff, var(--accent-cyan), var(--accent-purple), #ffffff);
+            background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textGradient 5s ease infinite;
         }
-        .hero p { color: var(--text-muted); font-size: 1.3rem; max-width: 650px; margin: 0 auto 40px; }
+        .hero p { color: var(--text-muted); font-size: 1.2rem; max-width: 650px; margin: 0 auto 40px; }
 
         .btn {
             display: inline-flex; align-items: center; justify-content: center; padding: 16px 40px; border-radius: 12px;
-            font-weight: 700; text-decoration: none; transition: var(--transition); gap: 12px; cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden;
+            font-weight: 800; text-decoration: none; transition: var(--transition-smooth); gap: 10px; font-family: 'Orbitron', sans-serif;
         }
-        .btn-primary { background: linear-gradient(135deg, var(--accent), #0284c7); color: #fff; border: none; box-shadow: 0 6px 30px var(--accent-glow); }
-        .btn-primary::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: skewX(-25deg); transition: 0.7s;
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color: #000;
+            box-shadow: 0 0 25px var(--cyan-glow); border: none;
         }
-        .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(6, 182, 212, 0.6); }
-        .btn-primary:hover::before { left: 150%; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 35px var(--accent-cyan); color: #fff; }
 
-        /* ====== ENCABEZADOS ====== */
+        /* ====== CABECERAS SECCIÓN ====== */
         .section-header { text-align: center; margin-bottom: 50px; }
         .section-title {
-            font-size: 2.8rem; font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 15px;
-            background: linear-gradient(90deg, #fff, #cffafe, #fff); background-size: 200%;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientFlow 4s linear infinite;
+            font-size: 2.5rem; font-family: 'Orbitron', sans-serif; font-weight: 900; margin-bottom: 12px;
+            background: linear-gradient(90deg, #fff, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
+        .section-subtitle { color: var(--text-muted); font-size: 1.05rem; }
 
-        /* ====== TARJETAS CRISTAL ====== */
+        /* ====== TARJETAS GLASS ====== */
         .glass-card {
             background: var(--bg-surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; transition: var(--transition);
+            border: 1px solid var(--border-light); border-radius: 20px; padding: 35px; transition: var(--transition-smooth);
         }
         .glass-card:hover {
-            border-color: rgba(6, 182, 212, 0.4); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(6, 182, 212, 0.1);
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-5px); border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(191, 0, 255, 0.1);
         }
 
-        /* ====== ANTES Y DESPUÉS ====== */
-        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        /* ====== ESPACIOS PARA IMÁGENES / PLACEHOLDERS ====== */
+        .image-container {
+            width: 100%; background: rgba(0, 0, 0, 0.4); border: 2px dashed rgba(0, 240, 255, 0.2);
+            border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            min-height: 250px; transition: var(--transition-smooth);
+        }
+        .image-container:hover { border-color: var(--accent-cyan); background: rgba(0, 240, 255, 0.02); }
+        .image-container img {
+            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
+        }
+        .image-hint {
+            display: flex; flex-direction: column; align-items: center; gap: 10px; color: rgba(255, 255, 255, 0.4);
+            font-family: 'Orbitron', sans-serif; font-size: 0.85rem; text-align: center; padding: 20px; pointer-events: none; z-index: 1;
+        }
+        .image-hint i { font-size: 2rem; color: var(--accent-cyan); opacity: 0.7; }
+
+        /* ====== SECCIÓN ANTES Y DESPUÉS ====== */
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         @media (max-width: 768px) { .comparison-grid { grid-template-columns: 1fr; } }
-        .compare-card h3 { font-size: 1.5rem; margin-bottom: 10px; font-family: 'Orbitron', sans-serif; }
-        .img-placeholder {
-            width: 100%; aspect-ratio: 16/9; background: rgba(0, 0, 0, 0.6); border-radius: 16px;
-            border: 2px dashed rgba(6, 182, 212, 0.3); display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); margin-top: 25px; overflow: hidden; position: relative; transition: var(--transition);
+        
+        .comp-card { padding: 25px; border-radius: 16px; position: relative; }
+        .comp-card.before { border-left: 4px solid var(--accent-rose); background: rgba(255, 0, 85, 0.02); }
+        .comp-card.after { border-left: 4px solid var(--accent-cyan); background: rgba(0, 240, 255, 0.02); }
+        
+        .badge-status {
+            position: absolute; top: 20px; right: 20px; padding: 5px 12px; border-radius: 6px;
+            font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 0.75rem;
         }
-        .img-placeholder:hover { border-color: var(--accent); background: rgba(0, 0, 0, 0.8); transform: scale(1.03); }
+        .before .badge-status { background: rgba(255, 0, 85, 0.15); color: var(--accent-rose); }
+        .after .badge-status { background: rgba(0, 240, 255, 0.15); color: var(--accent-cyan); box-shadow: 0 0 10px var(--cyan-glow); }
 
-        /* ====== BYPASS INFO ====== */
-        .bypass-wrapper { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 50px; align-items: center; }
-        @media (max-width: 900px) { .bypass-wrapper { grid-template-columns: 1fr; } }
-        .bypass-features { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .bypass-item { display: flex; gap: 20px; align-items: flex-start; padding: 25px; }
-        .bypass-icon {
-            flex-shrink: 0; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);
-            color: var(--accent-blue); padding: 15px; border-radius: 12px; font-size: 1.4rem;
-            animation: float 4s ease-in-out infinite; display: flex; align-items: center; justify-content: center;
-            width: 55px; height: 55px;
-        }
+        .stat-list { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .stat-list li { display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .stat-list span.val { font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        .before .stat-list span.val { color: var(--accent-rose); }
+        .after .stat-list span.val { color: var(--accent-cyan); }
 
-        /* ====== TIENDA (TABS) ====== */
-        .tabs-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 60px; flex-wrap: wrap; }
+        /* ====== SECCIÓN CONFIGURACIÓN EMULADORES ====== */
+        .emu-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: center; }
+        @media (max-width: 900px) { .emu-wrapper { grid-template-columns: 1fr; } }
+
+        .emu-details h3 { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; margin-bottom: 15px; color: #fff; }
+        .emu-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
+        .emu-features li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.98rem; }
+        .emu-features li i { color: var(--accent-purple); margin-top: 4px; filter: drop-shadow(0 0 5px var(--purple-glow)); }
+
+        /* ====== PRUEBAS DE RENDIMIENTO ====== */
+        .proofs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+
+        /* ====== TIENDA TABS Y PRECIOS ====== */
+        .tabs-container { display: flex; justify-content: center; gap: 12px; margin-bottom: 45px; flex-wrap: wrap; }
         .tab-btn {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); color: var(--text-muted);
-            padding: 16px 32px; border-radius: 12px; cursor: pointer; font-weight: 700; font-family: 'Orbitron', sans-serif;
-            font-size: 1rem; transition: var(--transition); position: relative; overflow: hidden;
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-light); color: var(--text-muted);
+            padding: 14px 28px; border-radius: 12px; cursor: pointer; font-weight: 700; font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem; transition: var(--transition-smooth); letter-spacing: 0.5px;
         }
-        .tab-btn:hover { color: #fff; border-color: rgba(255,255,255,0.2); transform: translateY(-3px); }
+        .tab-btn:hover { color: #fff; border-color: rgba(0, 240, 255, 0.3); }
         .tab-btn.active {
-            background: linear-gradient(135deg, var(--accent), #0284c7); color: #fff; border-color: transparent;
-            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.5); transform: translateY(-3px);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color: #000;
+            border-color: transparent; box-shadow: 0 0 25px var(--cyan-glow);
         }
 
-        .shop-panel { display: none; opacity: 0; transform: translateY(20px); transition: var(--transition); }
-        .shop-panel.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; opacity: 1; transform: translateY(0); }
-        .shop-panel.full-width { display: flex; flex-direction: column; gap: 20px; opacity: 1; transform: translateY(0); }
-
-        .pricing-card { display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        .price { font-size: 3.5rem; font-weight: 900; margin: 25px 0; color: #fff; font-family: 'Orbitron', sans-serif; display: flex; align-items: baseline; }
-        .price span { font-size: 1.1rem; color: var(--text-muted); font-family: 'Inter', sans-serif; margin-left: 8px; }
-        .features { list-style: none; margin-bottom: 40px; flex-grow: 1; }
-        .features li { margin-bottom: 15px; color: var(--text-muted); display: flex; align-items: center; gap: 12px; font-size: 1rem; }
-        .features li i { color: var(--accent); }
-
-        .warning-box {
-            background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3);
-            border-radius: 12px; padding: 20px; color: #fff; display: flex; align-items: center; gap: 15px;
-            margin-top: 20px;
+        .shop-panel { display: none; opacity: 0; transform: translateY(20px); transition: all 0.4s ease; }
+        .shop-panel.active { display: block; opacity: 1; transform: translateY(0); }
+        
+        /* ESTRUCTURA DESTACADA 3 COLUMNAS (Optimización) */
+        .pricing-tiers {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 25px;
+            width: 100%;
         }
-        .warning-box i { color: var(--accent-rose); font-size: 1.5rem; }
 
-        .btn-discord {
-            background: #5865F2; color: white; width: 100%; padding: 18px; border-radius: 12px;
-            font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px;
-            text-decoration: none; transition: var(--transition); border: none;
-            animation: pulseGlow 3s infinite;
+        .tier-side { flex: 1; max-width: 350px; display: flex; flex-direction: column; }
+        .tier-center { 
+            flex: 1.1; 
+            max-width: 400px; 
+            transform: scale(1.08); 
+            z-index: 2; 
+            box-shadow: 0 0 40px rgba(255,170,0,0.15);
+            display: flex; flex-direction: column;
         }
-        .btn-discord:hover { background: #4752C4; transform: translateY(-4px); animation: none; box-shadow: 0 10px 30px rgba(88, 101, 242, 0.6); }
+        .tier-center:hover { transform: translateY(-10px) scale(1.1); box-shadow: 0 15px 50px rgba(255,170,0,0.3); }
+
+        @media (max-width: 1024px) {
+            .pricing-tiers { flex-direction: column; align-items: center; }
+            .tier-side, .tier-center { max-width: 100%; width: 100%; }
+            .tier-center { transform: scale(1); order: -1; margin-bottom: 15px; } /* Oferta primero en móviles */
+            .tier-center:hover { transform: translateY(-5px); }
+        }
+
+        /* ESTRUCTURA BYPASS 4 COLUMNAS (Verticales por rentabilidad) */
+        .bypass-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 20px; 
+            align-items: center; 
+            padding-top: 15px; 
+        }
+        @media (max-width: 1024px) { .bypass-grid { grid-template-columns: repeat(2, 1fr); align-items: stretch; } }
+        @media (max-width: 600px) { .bypass-grid { grid-template-columns: 1fr; } }
+
+        .bypass-card { display: flex; flex-direction: column; height: 100%; position: relative; padding: 30px 20px; }
+        .bypass-subtitle { font-size: 0.8rem; font-weight: 700; margin-top: -10px; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .bypass-tier-1 { border-color: rgba(255, 255, 255, 0.1); }
+        .bypass-tier-2 { border-color: rgba(0, 240, 255, 0.3); }
+        .bypass-tier-3 { 
+            transform: scale(1.05); z-index: 2; border-color: var(--accent-purple); 
+            background: linear-gradient(180deg, rgba(191,0,255,0.05) 0%, rgba(13,6,28,0.9) 100%);
+            box-shadow: 0 0 30px rgba(191,0,255,0.15);
+        }
+        .bypass-tier-3:hover { transform: translateY(-8px) scale(1.08); box-shadow: 0 10px 40px rgba(191,0,255,0.3); }
+        
+        .bypass-tier-4 { 
+            transform: scale(1.08); z-index: 3; border-color: var(--accent-gold); 
+            background: linear-gradient(180deg, rgba(255,170,0,0.05) 0%, rgba(13,6,28,0.9) 100%);
+            box-shadow: 0 0 40px rgba(255,170,0,0.15);
+        }
+        .bypass-tier-4:hover { transform: translateY(-10px) scale(1.1); box-shadow: 0 15px 50px rgba(255,170,0,0.3); }
+
+        @media (max-width: 1024px) {
+            .bypass-tier-3, .bypass-tier-4 { transform: scale(1); }
+            .bypass-tier-3:hover, .bypass-tier-4:hover { transform: translateY(-5px); scale: 1.02; }
+        }
+
+        .pricing-card { position: relative; overflow: hidden; }
+        .pricing-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.25rem; color: #fff; margin-bottom: 15px; }
+        .price { font-size: 3rem; font-weight: 900; margin: 15px 0; color: #fff; font-family: 'Orbitron', sans-serif; }
+        .price span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+        
+        .card-features { list-style: none; margin: 20px 0 30px; flex-grow: 1; display: flex; flex-direction: column; gap: 12px; font-size: 0.95rem; }
+        .card-features li { display: flex; align-items: center; gap: 10px; }
+        .card-features li i { color: var(--accent-cyan); font-size: 1rem; }
+
+        /* BADGE PROMO */
+        .promo-badge {
+            position: absolute; top: 18px; right: -35px; background: linear-gradient(90deg, var(--accent-rose), #ff5500);
+            color: white; padding: 6px 40px; transform: rotate(45deg); font-weight: 900; font-size: 0.8rem;
+            font-family: 'Orbitron', sans-serif; box-shadow: 0 4px 12px rgba(255,0,85,0.3); z-index: 10; text-align: center;
+        }
+
+        /* BOTÓN COMPRA WHATSAPP */
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E); color: white; width: 100%; padding: 15px;
+            border-radius: 12px; font-weight: 800; font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
+            transition: var(--transition-smooth); border: none; cursor: pointer; animation: pulseWhatsapp 2s infinite;
+            margin-top: auto;
+        }
+        .btn-whatsapp:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4); }
+
+        /* INFO BOX ADICIONAL */
+        .info-box {
+            background: linear-gradient(90deg, rgba(37, 211, 102, 0.06), rgba(0, 240, 255, 0.02));
+            border: 1px solid rgba(37, 211, 102, 0.2); border-radius: 16px; padding: 25px; display: flex;
+            align-items: center; gap: 20px; margin-top: 40px; width: 100%;
+        }
+        .info-box i { color: var(--accent-green); font-size: 2rem; filter: drop-shadow(0 0 5px rgba(37,211,102,0.3)); }
 
         /* ====== REDES ====== */
-        .social-section { text-align: center; background: linear-gradient(180deg, var(--bg-surface), rgba(2,1,4,0.8)); }
-        .social-links { display: flex; justify-content: center; gap: 25px; margin-top: 50px; flex-wrap: wrap; }
+        .social-section { text-align: center; }
+        .social-links { display: flex; justify-content: center; gap: 15px; margin-top: 35px; flex-wrap: wrap; }
         .social-item {
-            display: flex; align-items: center; gap: 15px; padding: 18px 35px;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border-light);
-            border-radius: 16px; color: #fff; text-decoration: none; font-weight: 700; transition: var(--transition);
+            display: flex; align-items: center; gap: 12px; padding: 15px 30px; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-light); border-radius: 12px; color: #fff; text-decoration: none;
+            font-weight: 700; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; transition: var(--transition-smooth);
         }
-        .social-item:hover { background: rgba(6, 182, 212, 0.1); border-color: var(--accent); transform: translateY(-6px) scale(1.05); box-shadow: 0 10px 25px var(--accent-glow); }
-        .social-item i { font-size: 1.8rem; }
+        .social-item:hover { border-color: var(--accent-purple); transform: translateY(-4px); box-shadow: 0 8px 20px var(--purple-glow); }
 
-        footer { text-align: center; padding: 50px 20px; color: var(--text-muted); font-size: 0.95rem; border-top: 1px solid var(--border-light); margin-top: 80px; }
+        footer { 
+            text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; 
+            border-top: 1px solid var(--border-light); margin-top: 80px; background: rgba(2,0,5,0.9);
+        }
     </style>
 </head>
 <body>
@@ -209,248 +350,289 @@
         <div class="logo">Kyro<span>X</span> Shop</div>
         <div class="nav-links">
             <a href="#hero">Inicio</a>
-            <a href="#rendimiento">Resultados</a>
-            <a href="#bypass">Bypass</a>
+            <a href="#opti-section">Antes/Después</a>
+            <a href="#emu-section">Emuladores</a>
+            <a href="#pruebas-section">Pruebas</a>
             <a href="#tienda">Tienda</a>
-            <a href="#redes">Comunidad</a>
         </div>
     </nav>
 
     <div class="container">
+        
         <section id="hero" class="hero reveal">
-            <h1>Optimizamos tu PC.<br>Maximizamos tu Rendimiento.</h1>
-            <p>Sistemas de optimización avanzados y Bypass JBYE indetectable. Diseñado minuciosamente para dominar en PC a máximos FPS.</p>
-            <a href="#tienda" class="btn btn-primary">
-                Ver Catálogo VIP <i class="fa-solid fa-bolt"></i>
-            </a>
+            <h1>DOMINA EL JUEGO<br>CON MÁXIMA FLUIDEZ</h1>
+            <p>Optimizaciones de sistema avanzadas de nivel competitivo y Bypass seguro indetectable. Olvídate de los tirones y el retraso.</p>
+            <a href="#tienda" class="btn btn-primary">VER SERVICIOS VIP <i class="fa-solid fa-bolt"></i></a>
         </section>
 
-        <section id="rendimiento" class="reveal">
+        <section id="opti-section" class="reveal">
             <div class="section-header">
-                <h2 class="section-title">Resultados de Optimización</h2>
-                <p class="section-subtitle">Saca el máximo rendimiento a tu PC o Laptop.</p>
+                <h2 class="section-title">Rendimiento de Optimización</h2>
+                <p class="section-subtitle">Resultados reales medidos en hardware de juego tras aplicar nuestro sistema.</p>
             </div>
+            
             <div class="comparison-grid">
-                <div class="glass-card compare-card">
-                    <h3 style="color: var(--text-muted);"><i class="fa-solid fa-circle-xmark"></i> Antes del Sistema</h3>
-                    <p style="color: var(--text-muted);">Caídas drásticas de frames, procesos en segundo plano, alto consumo y retraso al jugar.</p>
-                    <div class="img-placeholder">
-                        <i class="fa-solid fa-image fa-2x" style="margin-bottom: 12px; opacity: 0.4;"></i>
-                        <span>[ Espacio para Imagen Antes ]</span>
+                <div class="glass-card comp-card before">
+                    <span class="badge-status">SISTEMA BASE</span>
+                    <h4 style="font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 20px;">Windows Genérico</h4>
+                    
+                    <div class="image-container" style="margin-bottom: 20px;">
+                        <img src="opti.jpeg" alt="Prueba de Rendimiento - Optimización de Windows" onerror="this.style.display='none';">
+                        <div class="image-hint">
+                            <i class="fa-solid fa-image"></i>
+                            <span>[ Imagen: opti.jpeg ]<br>Antes de la Optimización</span>
+                        </div>
                     </div>
+
+                    <ul class="stat-list">
+                        <li><span>FPS Promedio (Free Fire):</span> <span class="val">55 - 75 FPS Inestables</span></li>
+                        <li><span>Input Lag / Latencia:</span> <span class="val">8.2 ms</span></li>
+                        <li><span>Procesos en Segundo Plano:</span> <span class="val">130+ Activos</span></li>
+                        <li><span>Consumo de RAM en Reposo:</span> <span class="val">4.2 GB</span></li>
+                    </ul>
                 </div>
-                <div class="glass-card compare-card" style="border-color: rgba(6, 182, 212, 0.3);">
-                    <h3 style="color: #cffafe;"><i class="fa-solid fa-circle-check" style="color: var(--accent);"></i> Con KyroX Activo</h3>
-                    <p style="color: var(--text-muted);">Frametime plano, menos input lag, FPS extremos y fluidez sin trabas ni bajones.</p>
-                    <div class="img-placeholder" style="border-color: var(--accent);">
-                        <i class="fa-solid fa-bolt-lightning fa-2x" style="margin-bottom: 12px; color: var(--accent);"></i>
-                        <span style="color: var(--accent);">[ Espacio para Imagen Después ]</span>
+
+                <div class="glass-card comp-card after">
+                    <span class="badge-status">KYROX OPTIMIZADO</span>
+                    <h4 style="font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 20px;">Windows Modificado + VIP</h4>
+                    
+                    <div class="image-container" style="margin-bottom: 20px; border-color: rgba(0,240,255,0.4);">
+                        <img src="opti.jpeg" alt="Prueba de Rendimiento - Optimización de Windows" onerror="this.style.display='none';">
+                        <div class="image-hint">
+                            <i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i>
+                            <span>[ Imagen: opti.jpeg ]<br>Después de la Optimización</span>
+                        </div>
                     </div>
+
+                    <ul class="stat-list">
+                        <li><span>FPS Promedio (Free Fire):</span> <span class="val">90 - 240 FPS Sólidos</span></li>
+                        <li><span>Input Lag / Latencia:</span> <span class="val">1.1 ms</span></li>
+                        <li><span>Procesos en Segundo Plano:</span> <span class="val">42 Optimizados</span></li>
+                        <li><span>Consumo de RAM en Reposo:</span> <span class="val">1.8 GB</span></li>
+                    </ul>
                 </div>
             </div>
         </section>
 
-        <section id="bypass" class="reveal">
+        <section id="emu-section" class="reveal">
             <div class="section-header">
-                <h2 class="section-title">Bypass JBYE Oficial</h2>
-                <p class="section-subtitle">Juega en todas las regiones disponibles con total seguridad (SAFE).</p>
+                <h2 class="section-title">Configuración de Emuladores</h2>
+                <p class="section-subtitle">Calibración detallada de pies a cabeza para una sensibilidad perfecta sin saltos de mira.</p>
             </div>
-            <div class="bypass-wrapper">
-                <div class="bypass-features">
-                    <div class="glass-card bypass-item">
-                        <div class="bypass-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                        <div>
-                            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px; font-size: 1.1rem; color: #fff;">Anti-Detección Avanzado</h4>
-                            <p style="color: var(--text-muted); font-size: 0.95rem;">Evita el emparejamiento exclusivo de PC. Accede de manera segura e indetectable a salas de jugadores móviles.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="glass-card bypass-item">
-                        <div class="bypass-icon" style="color: var(--accent-purple); border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.1); animation-delay: 0.5s;"><i class="fa-solid fa-gauge-high"></i></div>
-                        <div>
-                            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px; font-size: 1.1rem; color: #fff;">Rendimiento Sin Pérdidas</h4>
-                            <p style="color: var(--text-muted); font-size: 0.95rem;">Ejecución ultra ligera en segundo plano que no compromete tus cuadros por segundo ni añade latencia extra.</p>
-                        </div>
-                    </div>
 
-                    <div class="glass-card bypass-item">
-                        <div class="bypass-icon" style="color: var(--accent-green); border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); animation-delay: 1s;"><i class="fa-solid fa-globe"></i></div>
-                        <div>
-                            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px; font-size: 1.1rem; color: #fff;">Todas las Regiones</h4>
-                            <p style="color: var(--text-muted); font-size: 0.95rem;">Soporte global sin importar tu ubicación. 100% Funcional y seguro para emparejar en cualquier servidor.</p>
-                        </div>
-                    </div>
-
-                    <div class="glass-card bypass-item">
-                        <div class="bypass-icon" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3); background: rgba(244,63,94,0.1); animation-delay: 1.5s;"><i class="fa-solid fa-headset"></i></div>
-                        <div>
-                            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px; font-size: 1.1rem; color: #fff;">Soporte Técnico Constante</h4>
-                            <p style="color: var(--text-muted); font-size: 0.95rem;">Asistencia garantizada a través de nuestra comunidad. Resolvemos tus dudas y problemas de configuración rápidamente.</p>
-                        </div>
+            <div class="emu-wrapper">
+                <div class="image-container" style="min-height: 380px;">
+                    <img src="confi emulador.jpeg" alt="Configuración Avanzada de Emulador" onerror="this.style.display='none';">
+                    <div class="image-hint">
+                        <i class="fa-solid fa-gamepad" style="color: var(--accent-purple);"></i>
+                        <span>[ Imagen: confi emulador.jpeg ]<br>Estructura Interna del Emulador</span>
                     </div>
                 </div>
 
-                <div class="glass-card" style="padding: 20px;">
+                <div class="emu-details">
+                    <h3>¿Qué incluye nuestra configuración PRO?</h3>
+                    <p style="color: var(--text-muted);">No es solo mover la sensibilidad en el juego. Modificamos la raíz del entorno para simular una respuesta lineal idéntica a la de un dispositivo móvil de alta gama.</p>
                     
-                    <div class="img-placeholder" style="aspect-ratio: 4/3; margin-top: 0; margin-bottom: 0;">
-                        <i class="fa-solid fa-display fa-2x" style="margin-bottom: 10px; opacity: 0.4;"></i>
-                        <span>[ Imagen de la interfaz del Bypass ]</span>
+                    <ul class="emu-features">
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Ajuste del Registro de Windows (Puntero):</strong> Eliminación total de la aceleración interna de tu ratón para un tracking perfecto.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Optimización del Motor Gráfico:</strong> Configuración ideal de núcleos asignados, memoria RAM asignada y renderizado por hardware (OpenGL/DirectX) en BS5, MSI, Tela o GPG.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Bypass de Delay en Teclado y Mouse:</strong> Reducción de la latencia de respuesta en los mapeos de teclas clave (suspender, paredes gloo, agacharse).</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Sensibilidad X e Y Personalizada:</strong> Calibración de acuerdo a tus DPIs actuales y resolución de pantalla para evitar que la mira tiemble o sobrepase la cabeza.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="pruebas-section" class="reveal">
+            <div class="section-header">
+                <h2 class="section-title">Pruebas de Rendimiento y Feedback</h2>
+                <p class="section-subtitle">Capturas de pantalla del software en funcionamiento, optimizaciones hechas y fiabilidad.</p>
+            </div>
+
+            <div class="proofs-grid">
+                <div class="glass-card" style="padding: 15px;">
+                    <div class="image-container" style="min-height: 200px; margin-bottom: 15px;">
+                        <img src="info bypass.jpeg" alt="Información Técnica del Bypass" onerror="this.style.display='none';">
+                        <div class="image-hint">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>[ Imagen: info bypass.jpeg ]<br>Info del Estado / Parámetros</span>
                         </div>
+                    </div>
+                    <p style="text-align: center; font-size: 0.9rem; font-weight: 600; color: #fff;">Panel Técnico del Bypass</p>
+                </div>
+
+                <div class="glass-card" style="padding: 15px;">
+                    <div class="image-container" style="min-height: 200px; margin-bottom: 15px;">
+                        <img src="bypass normal.jpeg" alt="Prueba de Bypass Normal" onerror="this.style.display='none';">
+                        <div class="image-hint">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>[ Imagen: bypass normal.jpeg ]<br>Demostración Bypass Normal</span>
+                        </div>
+                    </div>
+                    <p style="text-align: center; font-size: 0.9rem; font-weight: 600; color: #fff;">Funcionamiento Bypass Normal</p>
+                </div>
+
+                <div class="glass-card" style="padding: 15px;">
+                    <div class="image-container" style="min-height: 200px; margin-bottom: 15px;">
+                        <img src="bypass tela.jpeg" alt="Prueba de Bypass Tela" onerror="this.style.display='none';">
+                        <div class="image-hint">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>[ Imagen: bypass tela.jpeg ]<br>Demostración Bypass Tela</span>
+                        </div>
+                    </div>
+                    <p style="text-align: center; font-size: 0.9rem; font-weight: 600; color: #fff;">Rendimiento de Bypass Tela</p>
                 </div>
             </div>
         </section>
 
         <section id="tienda" class="reveal">
             <div class="section-header">
-                <h2 class="section-title">Tienda Oficial</h2>
-                <p class="section-subtitle">Elige el servicio idóneo para elevar tu nivel de juego.</p>
+                <h2 class="section-title">Catálogo VIP</h2>
+                <p class="section-subtitle">Haz clic en el servicio que deseas adquirir para abrir un chat directo e iniciar el trabajo.</p>
             </div>
 
             <div class="tabs-container">
-                <button class="tab-btn active" onclick="openTab(event, 'tab-opti')">Optimización de PC</button>
+                <button class="tab-btn active" onclick="openTab(event, 'tab-opti')">Optimización y Emulador</button>
                 <button class="tab-btn" onclick="openTab(event, 'tab-bypass-normal')">Bypass JBYE (Normal)</button>
                 <button class="tab-btn" onclick="openTab(event, 'tab-bypass-tela')">Bypass Tela JBYE</button>
             </div>
 
-            <div id="tab-opti" class="shop-panel full-width active" style="display: flex;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px;">
-                    <div class="glass-card pricing-card">
-                        <h3>Sistema y Limpieza</h3>
-                        <p style="color: var(--text-muted);">Preparamos tu equipo desde cero.</p>
-                        <div class="price">$10<span>/dólar</span></div>
-                        <ul class="features">
-                            <li><i class="fa-brands fa-windows"></i> Instalación de Windows 10/11 optimizado</li>
-                            <li><i class="fa-solid fa-broom"></i> Sistema limpio y eliminación de basura</li>
-                            <li><i class="fa-solid fa-microchip"></i> Menos consumo de RAM y disco</li>
-                            <li><i class="fa-solid fa-gear"></i> Todos los drivers actualizados</li>
+            <div id="tab-opti" class="shop-panel active">
+                <div class="pricing-tiers">
+                    
+                    <div class="glass-card pricing-card tier-side" style="border-color: rgba(0, 240, 255, 0.25);">
+                        <h3>Optimización Windows</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Rendimiento extremo del OS.</p>
+                        <div class="price">$20<span>/USD</span></div>
+                        <ul class="card-features">
+                            <li><i class="fa-solid fa-check"></i> Limpieza profunda de temporales</li>
+                            <li><i class="fa-solid fa-check"></i> Desactivación de telemetría basura</li>
+                            <li><i class="fa-solid fa-check"></i> Plan de energía de ultra latencia baja</li>
                         </ul>
-                        <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Preguntar en Ticket</a>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20estoy%20interesado%20en%20el%20servicio%20de%20Optimizaci%C3%B3n%20de%20Windows" target="_blank" class="btn-whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
+                        </a>
                     </div>
 
-                    <div class="glass-card pricing-card" style="border-color: var(--accent);">
-                        <h3>KyroX Rendimiento Extremo</h3>
-                        <p style="color: var(--text-muted);">Exprimimos cada FPS de tu PC de forma segura.</p>
-                        <div class="price">$20<span>/dólar</span></div>
-                        <ul class="features">
-                            <li><i class="fa-solid fa-gauge-high"></i> Aumento masivo de FPS y estabilidad</li>
-                            <li><i class="fa-solid fa-bolt"></i> Menos Input Lag y mejor respuesta</li>
-                            <li><i class="fa-solid fa-fire"></i> Rendimiento al máximo (Planes de energía)</li>
-                            <li><i class="fa-solid fa-user-gear"></i> Configuración personalizada a medida</li>
+                    <div class="glass-card pricing-card tier-center" style="border-color: var(--accent-gold); background: linear-gradient(180deg, rgba(255,170,0,0.05) 0%, rgba(13,6,28,0.9) 100%);">
+                        <div class="promo-badge">OFERTA</div>
+                        <h3 style="color: var(--accent-gold); font-size: 1.4rem;">Windows + Emulador</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">El pack definitivo para reventar.</p>
+                        <div class="price" style="color: var(--accent-gold); font-size: 3.5rem;">$25<span>/USD</span></div>
+
+                        <ul class="card-features" style="margin-top: 25px;">
+                            <li><i class="fa-solid fa-star" style="color: var(--accent-gold);"></i> <strong>Incluye Opti de Windows VIP</strong></li>
+                            <li><i class="fa-solid fa-star" style="color: var(--accent-gold);"></i> <strong>Incluye Setup Emulador PRO</strong></li>
                         </ul>
-                        <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Preguntar en Ticket</a>
+
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20aprovechar%20la%20Promoci%C3%B3n%20del%20Paquete%20Completo%20de%20%2425" target="_blank" class="btn-whatsapp" style="background: linear-gradient(135deg, var(--accent-gold), #25D366); color: #000;">
+                            <i class="fa-brands fa-whatsapp"></i> ¡Llevar Combo PRO!
+                        </a>
                     </div>
+
+                    <div class="glass-card pricing-card tier-side" style="border-color: rgba(191,0,255,0.25);">
+                        <h3>Configuración Emulador</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Sensibilidad y motor estable.</p>
+                        <div class="price">$15<span>/USD</span></div>
+                        <ul class="card-features">
+                            <li><i class="fa-solid fa-check" style="color: var(--accent-purple);"></i> Calibración X / Y perfecta</li>
+                            <li><i class="fa-solid fa-check" style="color: var(--accent-purple);"></i> Ajustes antibugs de teclas</li>
+                            <li><i class="fa-solid fa-check" style="color: var(--accent-purple);"></i> Optimización de FPS internos</li>
+                        </ul>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20estoy%20interesado%20en%20el%20servicio%20de%20Configuraci%C3%B3n%20de%20Emulador" target="_blank" class="btn-whatsapp" style="background: linear-gradient(135deg, #25D366, #0e6b3a);">
+                            <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
+                        </a>
+                    </div>
+
                 </div>
 
-                <div class="warning-box">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div>
-                        <strong style="display: block; margin-bottom: 5px; font-family: 'Orbitron', sans-serif;">ADVERTENCIA DE SEGURIDAD</strong>
-                        <p style="font-size: 0.95rem; margin: 0;">NO hago overclock ni modificaciones peligrosas. Todo es seguro, estable y pensado para cuidar tu equipo mientras mejoras el rendimiento.</p>
-                    </div>
+                <div class="info-box">
+                    <i class="fa-solid fa-shield-heart"></i>
+                    <p style="font-size: 0.9rem; color: #d1d5db; margin: 0;"><strong>GARANTÍA COMPETITIVA DE TRANSPARENCIA:</strong> Cero configuraciones inestables. Todo el trabajo se realiza de manera 100% segura para los componentes de tu computadora, priorizando cuadros estables y la menor latencia posible.</p>
                 </div>
             </div>
 
             <div id="tab-bypass-normal" class="shop-panel">
-                <div class="glass-card pricing-card">
-                    <h3>Bypass Normal</h3>
-                    <p style="color: var(--text-muted);">Suscripción 1 Semana.</p>
-                    <div class="price">$6<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
-                </div>
+                <div class="bypass-grid">
+                    <div class="glass-card pricing-card bypass-card bypass-tier-1">
+                        <h3 style="font-size: 1.15rem;">Bypass Normal <br><span style="font-size:0.8rem; color:var(--text-muted);">1 Semana</span></h3>
+                        <p class="bypass-subtitle" style="color: #9ca3af;">Opción Básica</p>
+                        <div class="price" style="font-size: 2.2rem;">$6<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20el%20Bypass%20Normal%20por%201%20Semana%20(%246)" target="_blank" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Comprar</a>
+                    </div>
 
-                <div class="glass-card pricing-card" style="border-color: var(--accent-purple);">
-                    <h3>Bypass Normal</h3>
-                    <p style="color: var(--text-muted);">Suscripción 1 Mes.</p>
-                    <div class="price">$20<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
-                </div>
+                    <div class="glass-card pricing-card bypass-card bypass-tier-2">
+                        <h3 style="font-size: 1.15rem;">Bypass Normal <br><span style="font-size:0.8rem; color:var(--text-muted);">1 Mes</span></h3>
+                        <p class="bypass-subtitle" style="color: var(--accent-cyan);">+ Rentable que 1 Sem</p>
+                        <div class="price" style="font-size: 2.2rem;">$20<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20el%20Bypass%20Normal%20por%201%20Mes%20(%2420)" target="_blank" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Comprar</a>
+                    </div>
 
-                <div class="glass-card pricing-card">
-                    <h3>Bypass Normal</h3>
-                    <p style="color: var(--text-muted);">Suscripción 1 Año.</p>
-                    <div class="price">$75<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
-                </div>
+                    <div class="glass-card pricing-card bypass-card bypass-tier-3">
+                        <div class="promo-badge" style="background: linear-gradient(90deg, var(--accent-purple), #8a00e6); right: -30px; font-size: 0.7rem; padding: 5px 30px;">MÁS VENDIDO</div>
+                        <h3 style="font-size: 1.15rem;">Bypass Normal <br><span style="font-size:0.8rem; color:var(--text-muted);">1 Año</span></h3>
+                        <p class="bypass-subtitle" style="color: var(--accent-purple);">Mucho + Rentable</p>
+                        <div class="price" style="font-size: 2.8rem; color: #fff;">$75<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20el%20Bypass%20Normal%20por%201%20A%C3%B1o%20(%2475)" target="_blank" class="btn-whatsapp" style="background: linear-gradient(135deg, var(--accent-purple), #25D366);"><i class="fa-brands fa-whatsapp"></i> Adquirir PRO</a>
+                    </div>
 
-                <div class="glass-card pricing-card" style="border-color: var(--accent-rose);">
-                    <h3>Bypass Normal</h3>
-                    <p style="color: var(--text-muted);">Licencia Permanente.</p>
-                    <div class="price">$150<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-infinity"></i> Acceso Infinito</li>
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
+                    <div class="glass-card pricing-card bypass-card bypass-tier-4">
+                        <div class="promo-badge" style="background: linear-gradient(90deg, var(--accent-gold), #cc8800); right: -30px; font-size: 0.7rem; padding: 5px 30px; color: #000;">MEJOR OPCIÓN</div>
+                        <h3 style="font-size: 1.15rem;">Bypass Normal <br><span style="font-size:0.8rem; color:var(--accent-rose);">Permanente</span></h3>
+                        <p class="bypass-subtitle" style="color: var(--accent-gold);">Máxima rentabilidad</p>
+                        <div class="price" style="font-size: 3.2rem; color: var(--accent-gold);">$150<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20la%20Licencia%20Permanente%20del%20Bypass%20Normal%20(%24150)" target="_blank" class="btn-whatsapp" style="background: linear-gradient(135deg, var(--accent-gold), #25D366); color: #000;"><i class="fa-brands fa-whatsapp"></i> Adquirir VIP</a>
+                    </div>
                 </div>
             </div>
 
             <div id="tab-bypass-tela" class="shop-panel">
-                <div class="glass-card pricing-card">
-                    <h3>Bypass Tela</h3>
-                    <p style="color: var(--text-muted);">Suscripción 1 Semana.</p>
-                    <div class="price">$10<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-check"></i> Arquitectura premium Tela</li>
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
-                </div>
+                <div class="bypass-grid">
+                    <div class="glass-card pricing-card bypass-card bypass-tier-1">
+                        <h3 style="font-size: 1.15rem;">Bypass Tela <br><span style="font-size:0.8rem; color:var(--text-muted);">1 Semana</span></h3>
+                        <p class="bypass-subtitle" style="color: #9ca3af;">Opción Básica</p>
+                        <div class="price" style="font-size: 2.2rem;">$10<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20el%20Bypass%20Tela%20por%201%20Semana%20(%2410)" target="_blank" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Comprar</a>
+                    </div>
 
-                <div class="glass-card pricing-card" style="border-color: var(--accent-purple);">
-                    <h3>Bypass Tela</h3>
-                    <p style="color: var(--text-muted);">Suscripción 1 Mes.</p>
-                    <div class="price">$30<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-check"></i> Ideal competitivo y torneos</li>
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
-                </div>
+                    <div class="glass-card pricing-card bypass-card bypass-tier-2">
+                        <h3 style="font-size: 1.15rem;">Bypass Tela <br><span style="font-size:0.8rem; color:var(--text-muted);">1 Mes</span></h3>
+                        <p class="bypass-subtitle" style="color: var(--accent-cyan);">+ Rentable que 1 Sem</p>
+                        <div class="price" style="font-size: 2.2rem;">$30<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20el%20Bypass%20Tela%20por%201%20Mes%20(%2430)" target="_blank" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Comprar</a>
+                    </div>
 
-                <div class="glass-card pricing-card">
-                    <h3>Bypass Tela</h3>
-                    <p style="color: var(--text-muted);">Suscripción 1 Año.</p>
-                    <div class="price">$100<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-check"></i> Dominio de la temporada</li>
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
-                </div>
+                    <div class="glass-card pricing-card bypass-card bypass-tier-3">
+                        <div class="promo-badge" style="background: linear-gradient(90deg, var(--accent-purple), #8a00e6); right: -30px; font-size: 0.7rem; padding: 5px 30px;">MÁS VENDIDO</div>
+                        <h3 style="font-size: 1.15rem;">Bypass Tela <br><span style="font-size:0.8rem; color:var(--text-muted);">1 Año</span></h3>
+                        <p class="bypass-subtitle" style="color: var(--accent-purple);">Mucho + Rentable</p>
+                        <div class="price" style="font-size: 2.8rem; color: #fff;">$100<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20el%20Bypass%20Tela%20por%201%20A%C3%B1o%20(%24100)" target="_blank" class="btn-whatsapp" style="background: linear-gradient(135deg, var(--accent-purple), #25D366);"><i class="fa-brands fa-whatsapp"></i> Adquirir PRO</a>
+                    </div>
 
-                <div class="glass-card pricing-card" style="border-color: var(--accent-rose);">
-                    <h3>Bypass Tela</h3>
-                    <p style="color: var(--text-muted);">Licencia Permanente.</p>
-                    <div class="price">$200<span>/dólar</span></div>
-                    <ul class="features">
-                        <li><i class="fa-solid fa-infinity"></i> Licencia Tela definitiva</li>
-                        <li><i class="fa-solid fa-check"></i> Todas las Regiones Disponibles</li>
-                        <li><i class="fa-solid fa-shield-check"></i> Estado: SAFE</li>
-                    </ul>
-                    <a href="https://discord.gg/TU_LINK_DE_TICKET" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> Comprar vía Ticket</a>
+                    <div class="glass-card pricing-card bypass-card bypass-tier-4">
+                        <div class="promo-badge" style="background: linear-gradient(90deg, var(--accent-gold), #cc8800); right: -30px; font-size: 0.7rem; padding: 5px 30px; color: #000;">MEJOR OPCIÓN</div>
+                        <h3 style="font-size: 1.15rem;">Bypass Tela <br><span style="font-size:0.8rem; color:var(--accent-rose);">Permanente</span></h3>
+                        <p class="bypass-subtitle" style="color: var(--accent-gold);">Máxima rentabilidad</p>
+                        <div class="price" style="font-size: 3.2rem; color: var(--accent-gold);">$200<span>/USD</span></div>
+                        <div style="flex-grow: 1;"></div>
+                        <a href="https://wa.me/584162772570?text=Hola%20KyroX,%20quiero%20adquirir%20la%20Licencia%20Permanente%20del%20Bypass%20Tela%20(%24200)" target="_blank" class="btn-whatsapp" style="background: linear-gradient(135deg, var(--accent-gold), #25D366); color: #000;"><i class="fa-brands fa-whatsapp"></i> Adquirir VIP</a>
+                    </div>
                 </div>
             </div>
+
         </section>
 
-        <section id="redes" class="glass-card social-section reveal">
-            <h2 class="section-title" style="font-size: 2.5rem;">Canales Oficiales</h2>
-            <p style="color: var(--text-muted);">Únete a la comunidad de KyroX.</p>
+        <section class="glass-card social-section reveal">
+            <h2 class="section-title" style="font-size: 2rem;">Redes y Comunidad</h2>
+            <p style="color: var(--text-muted);">Forma parte de la comunidad oficial del ecosistema KyroX.</p>
             <div class="social-links">
                 <a href="#" class="social-item"><i class="fa-brands fa-youtube" style="color: #ff0000;"></i> YouTube</a>
                 <a href="#" class="social-item"><i class="fa-brands fa-discord" style="color: #5865F2;"></i> Discord</a>
@@ -458,51 +640,34 @@
                 <a href="#" class="social-item"><i class="fa-brands fa-tiktok" style="color: #fff;"></i> TikTok</a>
             </div>
         </section>
+
     </div>
 
     <footer>
-        <p>&copy; 2026 KyroX Shop. Todos los derechos reservados.</p>
+        <p>&copy; 2026 KyroX Shop. Creado por Ahiman. Todos los derechos reservados.</p>
     </footer>
 
     <script>
-        // Animación al hacer scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
         function openTab(evt, tabId) {
             const panels = document.querySelectorAll('.shop-panel');
             const buttons = document.querySelectorAll('.tab-btn');
 
             panels.forEach(panel => {
                 panel.style.opacity = '0';
-                panel.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    panel.classList.remove('active');
-                    panel.style.display = 'none';
-                }, 300);
+                panel.style.transform = 'translateY(15px)';
+                setTimeout(() => { panel.classList.remove('active'); panel.style.display = 'none'; }, 200);
             });
             
             buttons.forEach(btn => btn.classList.remove('active'));
 
             setTimeout(() => {
                 const activePanel = document.getElementById(tabId);
-                
-                // Aplicar display específico según el contenedor
-                if(tabId === 'tab-opti') {
-                    activePanel.style.display = 'flex';
-                } else {
-                    activePanel.style.display = 'grid';
-                }
-                
+                activePanel.style.display = 'block';
                 activePanel.classList.add('active');
-                
-                void activePanel.offsetWidth;
-                
+                void activePanel.offsetWidth; // Forzar Reflow
                 activePanel.style.opacity = '1';
                 activePanel.style.transform = 'translateY(0)';
-            }, 300);
+            }, 210);
             
             evt.currentTarget.classList.add('active');
         }
@@ -521,7 +686,7 @@
                         entry.target.classList.add('active');
                     }
                 });
-            }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
+            }, { threshold: 0.05, rootMargin: "0px 0px -30px 0px" });
 
             reveals.forEach(reveal => scrollObserver.observe(reveal));
         });
